@@ -1,8 +1,7 @@
 # main.py - 主应用入口
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import Optional, List, Dict
+from typing import List, Dict
 import asyncio
 import json
 import uuid
@@ -12,9 +11,7 @@ import os
 
 # 导入其他模块
 from novel_generator import NovelGenerator
-from prompt_templates import PromptTemplates
-from database import SessionLocal
-from redis_cache import RedisCache
+from models import NovelRequest, NovelStatus, NovelTask
 
 app = FastAPI(title="AI小说生成系统")
 
@@ -29,44 +26,11 @@ app.add_middleware(
 
 
 # ============== 数据模型 ==============
-
-class NovelGenre(str, Enum):
-    URBAN_ROMANCE = "urban_romance"
-    MYSTERY = "mystery"
-    SCIFI = "scifi"
-    WORKPLACE = "workplace"
-    FANTASY = "fantasy"
-
-
-class NovelRequest(BaseModel):
-    theme: str  # 用户输入的主题
-    genre: Optional[NovelGenre] = None
-    style: Optional[str] = "知乎风格"
-    word_count: Optional[int] = 30000
-    chapter_count: Optional[int] = 12
-
-
-class NovelStatus(str, Enum):
-    PENDING = "pending"
-    OUTLINING = "outlining"
-    WRITING = "writing"
-    POLISHING = "polishing"
-    COMPLETED = "completed"
-    FAILED = "failed"
-
-
-class NovelTask(BaseModel):
-    task_id: str
-    status: NovelStatus
-    progress: int  # 0-100
-    current_stage: str
-    created_at: datetime
-    updated_at: datetime
-    result: Optional[Dict] = None
-    error: Optional[str] = None
+# 见 models.py
 
 # 任务存储（实际应用中应使用Redis）
 tasks_db = {}
+
 
 
 @app.post("/api/novel/generate", response_model=Dict)
