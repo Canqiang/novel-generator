@@ -3,6 +3,10 @@ from typing import Dict, List
 import tiktoken
 import asyncio
 from tenacity import retry, stop_after_attempt, wait_exponential
+import json
+from datetime import datetime
+from prompt_templates import PromptTemplates
+from main import NovelRequest, NovelStatus  # adjust path if models move
 
 
 class NovelGenerator:
