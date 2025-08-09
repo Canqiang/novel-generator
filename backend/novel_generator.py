@@ -4,6 +4,10 @@ import tiktoken
 import asyncio
 from tenacity import retry, stop_after_attempt, wait_exponential
 from redis_cache import RedisCache
+import json
+from datetime import datetime
+from prompt_templates import PromptTemplates
+from main import NovelRequest, NovelStatus  # adjust path if models move
 
 
 class NovelGenerator:
@@ -114,6 +118,7 @@ class NovelGenerator:
 
         # 并发生成，但限制并发数避免rate limit
         tasks = []
+        all_results = []
         for i, outline in enumerate(chapter_outlines):
             task = generate_single_chapter(outline, i + 1)
             tasks.append(task)
@@ -121,13 +126,15 @@ class NovelGenerator:
             # 每3个章节并发
             if (i + 1) % 3 == 0:
                 batch_results = await asyncio.gather(*tasks)
+                all_results.extend(batch_results)
                 tasks = []
 
         # 处理剩余任务
         if tasks:
             batch_results = await asyncio.gather(*tasks)
+            all_results.extend(batch_results)
 
-        return sorted(chapters, key=lambda x: x["chapter_num"])
+        return sorted(all_results, key=lambda x: x["chapter_num"])
 
     async def polish_chapters(self, chapters: List[Dict], outline: Dict) -> List[Dict]:
         """润色章节"""
@@ -146,6 +153,10 @@ class NovelGenerator:
 
         return polished
 
+    def get_previous_summary(self, chapter_num: int) -> str:
+        """Placeholder for retrieving the summary of earlier chapters."""
+        return ""
+
     def get_context_window(self, chapter_num: int, outline: Dict) -> Dict:
         """获取上下文窗口"""
         return {
@@ -159,7 +170,7 @@ class NovelGenerator:
         """统计字数"""
         total = 0
         for chapter in chapters:
-            total += len(chapter["content"])
+            total += len(chapter["content"].split())
         return total
 
     def count_tokens(self, chapters: List[Dict]) -> int:
@@ -179,3 +190,5 @@ class NovelGenerator:
         except Exception as e:
             # 避免状态更新失败中断生成流程
             print(f"Failed to update status for {task_id}: {e}")
+        # 这里应该更新到Redis或数据库
+        pass
