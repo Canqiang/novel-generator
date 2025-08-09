@@ -1,5 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { BookOpen, Sparkles, Clock, FileText, TrendingUp } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  BookOpen, Sparkles, Clock, FileText, TrendingUp,
+  Users, Brain, Edit, CheckCircle, AlertCircle,
+  Download, Eye, Trash2, RefreshCw
+} from 'lucide-react';
+
 import GeneratorForm from './components/GeneratorForm';
 import StatusDisplay from './components/StatusDisplay';
 import ResultPreview from './components/ResultPreview';
