@@ -151,6 +151,10 @@ class NovelGenerator:
 
         return polished
 
+    def get_previous_summary(self, chapter_num: int) -> str:
+        """Placeholder for retrieving the summary of earlier chapters."""
+        return ""
+
     def get_context_window(self, chapter_num: int, outline: Dict) -> Dict:
         """获取上下文窗口"""
         return {
