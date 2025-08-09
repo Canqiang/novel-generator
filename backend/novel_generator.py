@@ -7,7 +7,7 @@ from redis_cache import RedisCache
 import json
 from datetime import datetime
 from prompt_templates import PromptTemplates
-from main import NovelRequest, NovelStatus  # adjust path if models move
+from models import NovelRequest, NovelStatus
 
 
 class NovelGenerator:
