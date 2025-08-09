@@ -116,6 +116,7 @@ class NovelGenerator:
 
         # 并发生成，但限制并发数避免rate limit
         tasks = []
+        all_results = []
         for i, outline in enumerate(chapter_outlines):
             task = generate_single_chapter(outline, i + 1)
             tasks.append(task)
@@ -123,13 +124,15 @@ class NovelGenerator:
             # 每3个章节并发
             if (i + 1) % 3 == 0:
                 batch_results = await asyncio.gather(*tasks)
+                all_results.extend(batch_results)
                 tasks = []
 
         # 处理剩余任务
         if tasks:
             batch_results = await asyncio.gather(*tasks)
+            all_results.extend(batch_results)
 
-        return sorted(chapters, key=lambda x: x["chapter_num"])
+        return sorted(all_results, key=lambda x: x["chapter_num"])
 
     async def polish_chapters(self, chapters: List[Dict], outline: Dict) -> List[Dict]:
         """润色章节"""
