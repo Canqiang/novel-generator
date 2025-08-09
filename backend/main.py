@@ -8,6 +8,7 @@ import json
 import uuid
 from datetime import datetime
 from enum import Enum
+import os
 
 # 导入其他模块
 from novel_generator import NovelGenerator
@@ -101,7 +102,8 @@ async def generate_novel(request: NovelRequest, background_tasks: BackgroundTask
 
 async def process_novel_generation(task_id: str, request: NovelRequest):
     """后台处理小说生成"""
-    generator = NovelGenerator(api_key="your-openai-api-key")
+    api_key = os.getenv("OPENAI_API_KEY")
+    generator = NovelGenerator(api_key=api_key)
 
     try:
         result = await generator.generate_novel(request, task_id)
