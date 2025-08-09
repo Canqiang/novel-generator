@@ -12,7 +12,7 @@ from enum import Enum
 # 导入其他模块
 from novel_generator import NovelGenerator
 from prompt_templates import PromptTemplates
-from database import Database
+from database import SessionLocal
 from redis_cache import RedisCache
 
 app = FastAPI(title="AI小说生成系统")
