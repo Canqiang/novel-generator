@@ -94,9 +94,11 @@ docker run -d --name redis -p 6379:6379 redis:alpine
 ```
 
 ### 4. 启动后端
+在启动前请确保已设置 `OPENAI_API_KEY` 环境变量：
 
 ```bash
 cd backend
+export OPENAI_API_KEY=sk-your-api-key  # 或在环境中预先设置
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
