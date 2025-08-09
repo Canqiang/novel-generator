@@ -3,7 +3,7 @@ import redis
 import json
 import pickle
 from typing import Any, Optional
-from datetime import timedelta
+from datetime import timedelta, datetime
 import hashlib
 
 
@@ -60,15 +60,17 @@ class RedisCache:
         value = self.redis_client.get(key)
         return self._deserialize(value)
 
-    def update_task_status(self, task_id: str, status: str, progress: int = None) -> None:
+    def update_task_status(self, task_id: str, status: str, progress: int = None,
+                           error: str = None) -> None:
         """更新任务状态"""
-        task = self.get_task(task_id)
-        if task:
-            task['status'] = status
-            if progress is not None:
-                task['progress'] = progress
-            task['updated_at'] = datetime.utcnow().isoformat()
-            self.set_task(task_id, task)
+        task = self.get_task(task_id) or {}
+        task['status'] = status
+        if progress is not None:
+            task['progress'] = progress
+        if error is not None:
+            task['error'] = error
+        task['updated_at'] = datetime.utcnow().isoformat()
+        self.set_task(task_id, task)
 
     # ========== 结果缓存 ==========
 

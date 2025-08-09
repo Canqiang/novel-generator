@@ -3,6 +3,7 @@ from typing import Dict, List
 import tiktoken
 import asyncio
 from tenacity import retry, stop_after_attempt, wait_exponential
+from redis_cache import RedisCache
 import json
 from datetime import datetime
 from prompt_templates import PromptTemplates
@@ -16,6 +17,7 @@ class NovelGenerator:
         openai.api_key = api_key
         self.encoding = tiktoken.encoding_for_model(model)
         self.templates = PromptTemplates()
+        self.cache = RedisCache()
 
     async def generate_novel(self, request: NovelRequest, task_id: str) -> Dict:
         """主生成流程"""
@@ -182,5 +184,11 @@ class NovelGenerator:
     async def update_task_status(self, task_id: str, status: NovelStatus,
                                  progress: int = 0, error: str = None):
         """更新任务状态到Redis"""
+        try:
+            status_value = status.value if hasattr(status, "value") else status
+            self.cache.update_task_status(task_id, status_value, progress, error)
+        except Exception as e:
+            # 避免状态更新失败中断生成流程
+            print(f"Failed to update status for {task_id}: {e}")
         # 这里应该更新到Redis或数据库
         pass
