@@ -157,7 +157,7 @@ class NovelGenerator:
         """统计字数"""
         total = 0
         for chapter in chapters:
-            total += len(chapter["content"])
+            total += len(chapter["content"].split())
         return total
 
     def count_tokens(self, chapters: List[Dict]) -> int:
