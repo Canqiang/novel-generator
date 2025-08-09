@@ -1,3 +1,7 @@
+from typing import Dict
+import json
+
+
 class PromptTemplates:
     """提示词模板管理"""
 
