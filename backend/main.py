@@ -9,6 +9,8 @@ from datetime import datetime
 from enum import Enum
 import os
 
+from openai import base_url
+
 # 导入其他模块
 from novel_generator import NovelGenerator
 from models import NovelRequest, NovelStatus, NovelTask
@@ -66,8 +68,10 @@ async def generate_novel(request: NovelRequest, background_tasks: BackgroundTask
 
 async def process_novel_generation(task_id: str, request: NovelRequest):
     """后台处理小说生成"""
-    api_key = os.getenv("OPENAI_API_KEY")
-    generator = NovelGenerator(api_key=api_key)
+    # api_key = os.getenv("OPENAI_API_KEY")
+    api_key = 'sk-Fmiw2WNajQ7fkU6thUpMqKEUCTk2D1r1JGmRWfv8k7p8s1pu'
+    base_url = 'https://api.openai-proxy.org/v1'
+    generator = NovelGenerator(api_key=api_key,base_ur=base_url)
 
     try:
         result = await generator.generate_novel(request, task_id)

@@ -2,6 +2,7 @@ import openai
 from typing import Dict, List
 import tiktoken
 import asyncio
+
 from tenacity import retry, stop_after_attempt, wait_exponential
 from redis_cache import RedisCache
 import json
@@ -11,9 +12,10 @@ from models import NovelRequest, NovelStatus
 
 
 class NovelGenerator:
-    def __init__(self, api_key: str, model: str = "gpt-3.5-turbo-16k"):
+    def __init__(self, api_key: str,base_ur:str, model: str = "gpt-3.5-turbo-16k"):
         self.api_key = api_key
         self.model = model
+        self.base_ur = base_ur
         openai.api_key = api_key
         self.encoding = tiktoken.encoding_for_model(model)
         self.templates = PromptTemplates()
@@ -64,6 +66,7 @@ class NovelGenerator:
         response = await openai.ChatCompletion.acreate(
             model=self.model,
             messages=messages,
+            base_url=self.base_ur,
             temperature=temperature,
             max_tokens=2000
         )
