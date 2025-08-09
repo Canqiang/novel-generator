@@ -1,0 +1,5 @@
+fastapi
+sqlalchemy
+openai
+redis
+tiktoken
